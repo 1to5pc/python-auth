@@ -1,6 +1,6 @@
-usrlist=[]
 def init_usrs(nUsr):
     import hashlib
+    usrlist=[]
     for index in range(nUsr):
         usrname=input("Enter username: ")
         pswd=input("Enter password: ")
@@ -11,6 +11,7 @@ def init_usrs(nUsr):
     return usrlist
 
 def load_users():
+    usrlist=[]
     saveFile = open("usrlist", "r")
     temp = saveFile.read().split(",")
     for x in range(len(temp)//2):
@@ -79,6 +80,8 @@ def login_init(usrname,pswd,overWrite,quiet):
     return loginSt
 
 def test_func():
+    import os
+    print("[Authentication Test]".center(os.get_terminal_size().columns))
     usr=input("Input username: ")
     pswd=input("Input password: ")
     oW=input("Enable username list overwrite? (y/N)")
@@ -90,4 +93,5 @@ def test_func():
     
     loginSuccess=login_init(usr,pswd,oW,quiet)
     print("Login success status:", loginSuccess)
+
 test_func()
