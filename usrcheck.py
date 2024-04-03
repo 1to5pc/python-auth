@@ -41,7 +41,6 @@ def usr_check(usrn,pswd,usrlist):
             Ufound=True
             if usrlist[index][1]==pswd:
                 Pfound=True
-        #print(usrlist[index][0],usrlist[index][1])
         index=index+1
     return Ufound,Pfound
 
@@ -84,14 +83,34 @@ def test_func():
     print("[Authentication Test]".center(os.get_terminal_size().columns))
     usr=input("Input username: ")
     pswd=input("Input password: ")
-    oW=input("Enable username list overwrite? (y/N)")
+    oW=input("Enable username list overwrite? (y/N): ")
     if oW.upper()=="Y":
         oW=True
     else:
         oW=False
-    quiet=input("Enable quiet mode? (y/N)")
+    quiet=input("Enable quiet mode? (y/N): ")
+    if quiet.upper()=="Y":
+        quiet=True
+    else:
+        quiet=False
     
     loginSuccess=login_init(usr,pswd,oW,quiet)
     print("Login success status:", loginSuccess)
 
-test_func()
+def main_menu():
+    print("\n--- Main Menu ---")
+    print("1. Test Authentication")
+    print("2. Exit")
+    choice = input("Enter your choice: ")
+    if choice == '1':
+        test_func()
+    elif choice == '2':
+        print("Exiting program.")
+        exit()
+    else:
+        print("Invalid choice. Please enter 1 or 2.")
+        main_menu()
+
+if __name__ == "__main__":
+    while True:
+        main_menu()
