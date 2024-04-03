@@ -60,41 +60,46 @@ def login_status(Ufound,Pfound,quiet):
             return True
         else:
             return False
-
+            
 def login_init(usrname,pswd,overWrite,quiet):
     import os
     import sys
-    if os.path.isfile("usrlist") == False:
-        if overWrite==True:
-            usrlist=init_usrs(5)
-            save_users(usrlist)
-        else:
-            print("Userfile does not exist! Execute with overWrite set to 'True'")
-            sys.exit()
+    loginSt=False
+    if os.path.isfile("usrlist") == False and overWrite==False:
+        print("Userfile does not exist! Execute with overWrite set to 'True'")
+        sys.exit()
+    elif overWrite==True:
+        nUsr=int(input("Enter the number of users to initialize: "))
+        usrlist=init_usrs(nUsr)
+        save_users(usrlist)
     else:
         usrlist = load_users()
-    
-    Ufound,Pfound=usr_check(usrname,pswd,usrlist)
-    loginSt=login_status(Ufound,Pfound,quiet)
+        Ufound,Pfound=usr_check(usrname,pswd,usrlist)
+        loginSt=login_status(Ufound,Pfound,quiet)
     return loginSt
+
 
 def test_func():
     import os
-    print("[Authentication Test]".center(os.get_terminal_size().columns))
+    try:
+        print("[Authentication Test]".center(os.get_terminal_size().columns))
+    except OSError:
+        print("[Authentication Test]")
     usr=input("Input username: ")
     pswd=input("Input password: ")
-    oW=input("Enable username list overwrite? (y/N): ")
+    oW=input("Enable username list overwrite? (y/N)")
     if oW.upper()=="Y":
         oW=True
     else:
         oW=False
-    quiet=input("Enable quiet mode? (y/N): ")
-    if quiet.upper()=="Y":
+    
+    if input("Enable quiet mode? (y/N)").upper() == "Y":
         quiet=True
     else:
         quiet=False
     
-    loginSuccess=login_init(usr,pswd,oW,quiet)
+    if oW!="Y":
+        loginSuccess=login_init(usr,pswd,oW,quiet)
     print("Login success status:", loginSuccess)
 
 def main_menu():
