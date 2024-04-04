@@ -21,8 +21,11 @@ def load_users():
     saveFile.close()
     return usrlist
 
-def save_users(usrlist):
-    saveFile = open("usrlist", "a")
+def save_users(usrlist,overWrite):
+    if overWrite==True:
+        saveFile = open("usrlist", "w")
+    else:
+        saveFile = open("usrlist", "a")
     for x in range(len(usrlist)):
         if (x-2)<len(usrlist):
             saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+",")
@@ -69,9 +72,19 @@ def login_init(usrname,pswd,overWrite,quiet):
         print("Userfile does not exist! Execute with overWrite set to 'True'")
         sys.exit()
     elif overWrite==True:
-        nUsr=int(input("Enter the number of users to initialize: "))
+        if input("Do you want to overwrite the existing user list[y/N]? ").upper()=='Y':
+            newFile=True
+        else:
+            newFile=False
+        while True:
+            nUsr=input("Enter the number of users to initialize: ")
+            try:
+                nUsr=int(nUsr)
+                break
+            except ValueError:
+                pass
         usrlist=init_usrs(nUsr)
-        save_users(usrlist)
+        save_users(usrlist,newFile)
     else:
         usrlist = load_users()
         Ufound,Pfound=usr_check(usrname,pswd,usrlist)
@@ -79,7 +92,7 @@ def login_init(usrname,pswd,overWrite,quiet):
     return loginSt
 
 
-def test_func():
+def Auth_test():
     import os
     try:
         print("[Authentication Test]".center(os.get_terminal_size().columns))
@@ -87,28 +100,23 @@ def test_func():
         print("[Authentication Test]")
     usr=input("Input username: ")
     pswd=input("Input password: ")
-    oW=input("Enable username list overwrite? (y/N)")
-    if oW.upper()=="Y":
-        oW=True
-    else:
-        oW=False
-    
-    if input("Enable quiet mode? (y/N)").upper() == "Y":
+    if input("Enable quiet mode? [y/N]").upper() == "Y":
         quiet=True
     else:
         quiet=False
-    
-    if oW!="Y":
-        loginSuccess=login_init(usr,pswd,oW,quiet)
+    loginSuccess=login_init(usr,pswd,False,quiet)
     print("Login success status:", loginSuccess)
 
 def main_menu():
     print("\n--- Main Menu ---")
+    print("0. Initialize user accounts")
     print("1. Test Authentication")
     print("2. Exit")
     choice = input("Enter your choice: ")
-    if choice == '1':
-        test_func()
+    if choice == '0':
+        login_init('','',True,False)
+    elif choice == '1':
+        Auth_test()
     elif choice == '2':
         print("Exiting program.")
         exit()
