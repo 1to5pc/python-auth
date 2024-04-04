@@ -44,6 +44,7 @@ def usr_check(usrn,pswd,usrlist):
             Ufound=True
             if usrlist[index][1]==pswd:
                 Pfound=True
+            break
         index=index+1
     return Ufound,Pfound
 
