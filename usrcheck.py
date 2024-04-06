@@ -84,8 +84,9 @@ def login_init(usrname,pswd,overWrite,quiet):
                 break
             except ValueError:
                 pass
-        usrlist=init_usrs(nUsr)
-        save_users(usrlist,newFile)
+        if nUsr>0:
+            usrlist=init_usrs(nUsr)
+            save_users(usrlist,newFile)
     else:
         usrlist = load_users()
         Ufound,Pfound=usr_check(usrname,pswd,usrlist)
