@@ -26,11 +26,14 @@ def save_users(usrlist,overWrite):
         saveFile = open("usrlist", "w")
     else:
         saveFile = open("usrlist", "a")
-    for x in range(len(usrlist)):
-        if (x-2)<len(usrlist):
-            saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+",")
-        else:
-            saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1]))
+    if len(usrlist)>0:
+        for x in range(len(usrlist)):
+            if (x-2)<len(usrlist):
+                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+",")
+            else:
+                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1]))
+    else:
+        saveFile.write('')
     saveFile.close()
    
 def usr_check(usrn,pswd,usrlist):
@@ -78,7 +81,7 @@ def login_init(usrname,pswd,overWrite,quiet):
         else:
             newFile=False
         while True:
-            nUsr=input("Enter the number of users to initialize: ")
+            nUsr=input("Enter the number of users to initialize ('0' Clears the database): ")
             try:
                 nUsr=int(nUsr)
                 break
@@ -87,6 +90,8 @@ def login_init(usrname,pswd,overWrite,quiet):
         if nUsr>0:
             usrlist=init_usrs(nUsr)
             save_users(usrlist,newFile)
+        elif nUsr==0:
+            save_users([],True)
     else:
         usrlist = load_users()
         Ufound,Pfound=usr_check(usrname,pswd,usrlist)
