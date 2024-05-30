@@ -104,8 +104,10 @@ def usr_check(usrn,pswd,usrlist, test_hasher: hash.Hasher=None):
         config.read('config.ini')
         try:
             alg = config['Config']['alg'].lower()
+            if not (alg in hash.SUPPORTED_HASHES):
+                raise KeyError
         except KeyError:
-            print("No algorithm specified to read usrlist\nDefaulting to sha256")
+            print("No algorithm specified to read usrlist or unsuporrted algorithm\nDefaulting to sha256")
             alg = 'sha256'
         hasher = hash.Hasher(alg)
     index=0
