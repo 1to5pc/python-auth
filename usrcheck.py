@@ -23,7 +23,7 @@ def configRead():
 
 def salter(pswd,saltsize):
     import string
-    import secrets    
+    import secrets
     alphabet = string.ascii_letters + string.digits
     salt = ''.join(secrets.choice(alphabet) for i in range(saltsize))
     return pswd+salt,salt
@@ -132,7 +132,7 @@ def login_init(usrname,pswd,overWrite,quiet,saltSize):
         if nUsr>0:
             usrlist=init_usrs(nUsr,saltSize)
             save_users(usrlist,newFile)
-        elif nUsr==0:
+        elif nUsr==0 and overWrite==True:
             save_users([],True)
     else:
         usrlist = load_users()
@@ -155,7 +155,10 @@ def Auth_test(quiet):
 #    else:
 #        quiet=False
     loginSuccess=login_init(usr,pswd,False,quiet,0)
-    print("Login success status:", loginSuccess)
+    if quiet!=True:
+        print("Login success status:", loginSuccess)
+    else:
+        print(loginSuccess)
 
 def main_menu():
     quiet,alg,saltSize=configRead()
