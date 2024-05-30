@@ -23,29 +23,38 @@ def configRead():
 
 def salter(pswd,saltsize):
     import string
-    import secrets
-    pass
+    import secrets    
+    alphabet = string.ascii_letters + string.digits
+    salt = ''.join(secrets.choice(alphabet) for i in range(saltsize))
+    return pswd+salt,salt
 
-def init_usrs(nUsr):
+def init_usrs(nUsr, saltSize):
     import hashlib
     usrlist=[]
     for index in range(nUsr):
-        usrname=input("Enter username: ")
-        pswd=input("Enter password: ")
-        pswd=hashlib.sha256(pswd.encode()).hexdigest()
+        usrname=''
+        pswd=''
+        while usrname=='':
+            usrname = input("Enter username: ")
+        while pswd=='':
+            pswd = input("Enter password: ")
+        pswd,salt = salter(pswd,saltSize)
+        pswd = hashlib.sha256(pswd.encode()).hexdigest()
         usrlist.append([])
         usrlist[index].append(usrname)
         usrlist[index].append(pswd)
+        usrlist[index].append(salt)
     return usrlist
 
 def load_users():
     usrlist=[]
     saveFile = open("usrlist", "r")
     temp = saveFile.read().split(",")
-    for x in range(len(temp)//2):
+    for x in range(len(temp)//3):
         usrlist.append([])
-        usrlist[x].append(temp[(2*x)])
-        usrlist[x].append(temp[(2*x)+1])
+        usrlist[x].append(temp[(3*x)])
+        usrlist[x].append(temp[(3*x)+1])
+        usrlist[x].append(temp[(3*x)+2])
     saveFile.close()
     return usrlist
 
@@ -53,13 +62,18 @@ def save_users(usrlist,overWrite):
     if overWrite==True:
         saveFile = open("usrlist", "w")
     else:
-        saveFile = open("usrlist", "a")
+        saveFile = open("usrlist", "r")
+        if saveFile.read()!='':
+            saveFile = open("usrlist", "a")
+            saveFile.write(',')
+        else:
+            saveFile = open("usrlist", "a")
     if len(usrlist)>0:
         for x in range(len(usrlist)):
-            if (x-2)<len(usrlist):
-                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+",")
+            if (x+1)<len(usrlist):
+                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+","+str(usrlist[x][2])+',')
             else:
-                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1]))
+                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+","+str(usrlist[x][2]))
     else:
         saveFile.write('')
     saveFile.close()
@@ -69,10 +83,10 @@ def usr_check(usrn,pswd,usrlist):
     index=0
     Ufound=False
     Pfound=False
-    pswd=hashlib.sha256(pswd.encode()).hexdigest()
     while Ufound==False and index<len(usrlist):
         if usrlist[index][0]==usrn:
             Ufound=True
+            pswd=hashlib.sha256(str(pswd+str(usrlist[index][2])).encode()).hexdigest()
             if usrlist[index][1]==pswd:
                 Pfound=True
             break
@@ -96,7 +110,7 @@ def login_status(Ufound,Pfound,quiet):
         else:
             return False
             
-def login_init(usrname,pswd,overWrite,quiet):
+def login_init(usrname,pswd,overWrite,quiet,saltSize):
     import os
     import sys
     loginSt=False
@@ -116,7 +130,7 @@ def login_init(usrname,pswd,overWrite,quiet):
             except ValueError:
                 pass
         if nUsr>0:
-            usrlist=init_usrs(nUsr)
+            usrlist=init_usrs(nUsr,saltSize)
             save_users(usrlist,newFile)
         elif nUsr==0:
             save_users([],True)
@@ -140,7 +154,7 @@ def Auth_test(quiet):
 #        quiet=True
 #    else:
 #        quiet=False
-    loginSuccess=login_init(usr,pswd,False,quiet)
+    loginSuccess=login_init(usr,pswd,False,quiet,0)
     print("Login success status:", loginSuccess)
 
 def main_menu():
@@ -151,7 +165,7 @@ def main_menu():
     print("2. Exit")
     choice = input("Enter your choice: ")
     if choice == '0':
-        login_init('','',True,quiet)
+        login_init('','',True,quiet,saltSize)
     elif choice == '1':
         Auth_test(quiet)
     elif choice == '2':
