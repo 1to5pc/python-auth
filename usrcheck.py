@@ -1,3 +1,8 @@
+import hash
+
+# TODO: Encapsulate this later
+hasher = None
+
 def configRead():
     import configparser
     config = configparser.ConfigParser()
@@ -8,11 +13,16 @@ def configRead():
     except KeyError:
         quiet = False
     try:
-        alg = config['Config']['alg']
-        alg = str(quiet).lower()
+        alg = config['Config']['alg'].lower()
+        # alg = str(quiet).lower() Not really sure the purpose of this line
+        # Not the most elegant but trying to hit the KeyError on unsupported hash algs
+        if not (alg in hash.SUPPORTED_HASHES):
+            raise KeyError
     except KeyError:
         print("ERROR: Algorithm not defined. Reverting to SHA256")
         alg = 'sha256'
+    global hasher
+    hasher = hash.Hasher(alg)
     try:
         saltSize = config['Salt']['saltSize']
         saltSize = int(saltSize)
@@ -29,7 +39,6 @@ def salter(pswd,saltsize):
     return pswd+salt,salt
 
 def init_usrs(nUsr, saltSize):
-    import hashlib
     usrlist=[]
     for index in range(nUsr):
         usrname=''
@@ -39,7 +48,10 @@ def init_usrs(nUsr, saltSize):
         while pswd=='':
             pswd = input("Enter password: ")
         pswd,salt = salter(pswd,saltSize)
-        pswd = hashlib.sha256(pswd.encode()).hexdigest()
+        hasher.update(pswd.encode())
+        pswd = hasher.hexdigest()
+        # We have to clear the hasher every time with the new implementation, later we could define this behaviour automatically
+        hasher.clear_hasher()
         usrlist.append([])
         usrlist[index].append(usrname)
         usrlist[index].append(pswd)
@@ -78,15 +90,33 @@ def save_users(usrlist,overWrite):
         saveFile.write('')
     saveFile.close()
    
-def usr_check(usrn,pswd,usrlist):
-    import hashlib
+def usr_check(usrn,pswd,usrlist, test_hasher: hash.Hasher=None):
+    if test_hasher:
+        hasher = test_hasher
+    # TODO:
+    # Supporting different hashes means we have to figure out what hash was used for the usrlist
+    # This basic solution simply reads what hash was specified in the config file.
+    # The config file will need additional information, and this logic will have to be changed, if variable
+    # output for shake is allowed.
+    else:
+        import configparser
+        config = configparser.ConfigParser()
+        config.read('config.ini')
+        try:
+            alg = config['Config']['alg'].lower()
+        except KeyError:
+            print("No algorithm specified to read usrlist\nDefaulting to sha256")
+            alg = 'sha256'
+        hasher = hash.Hasher(alg)
     index=0
     Ufound=False
     Pfound=False
     while Ufound==False and index<len(usrlist):
         if usrlist[index][0]==usrn:
             Ufound=True
-            pswd=hashlib.sha256(str(pswd+str(usrlist[index][2])).encode()).hexdigest()
+            hasher.update(str(pswd+str(usrlist[index][2])).encode())
+            pswd = hasher.hexdigest()
+            hasher.clear_hasher()
             if usrlist[index][1]==pswd:
                 Pfound=True
             break
@@ -118,11 +148,14 @@ def login_init(usrname,pswd,overWrite,quiet,saltSize):
         print("Userfile does not exist! Execute with overWrite set to 'True'")
         sys.exit()
     elif overWrite==True:
-        if input("Do you want to overwrite the existing user list[y/N]? ").upper()=='Y':
-            newFile=True
-        else:
-            newFile=False
+        # Bug fix for when no usrlist exists but the user asks not to overwrite user list
+        newFile = True
+        if os.path.isfile("usrlist") and (input("Do you want to overwrite the existing user list [Y/N]? ").upper() == 'N'):
+            newFile = False
         while True:
+            # TODO: 
+            # Seems to me redundant to ask if they want to clear the database when "overwriting" the existing database does
+            # the same thing.
             nUsr=input("Enter the number of users to initialize ('0' Clears the database): ")
             try:
                 nUsr=int(nUsr)
