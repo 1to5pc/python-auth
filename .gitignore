@@ -1,2 +1,3 @@
 usrlist
-__pycache__/usrcheck.cpython-310.pyc
+# Ignore the whole cache
+__pycache__/
