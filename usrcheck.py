@@ -1,3 +1,31 @@
+def configRead():
+    import configparser
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    try:
+        quiet = config['Config']['quiet']
+        quiet = quiet.lower() in ("true")
+    except KeyError:
+        quiet = False
+    try:
+        alg = config['Config']['alg']
+        alg = str(quiet).lower()
+    except KeyError:
+        print("ERROR: Algorithm not defined. Reverting to SHA256")
+        alg = 'sha256'
+    try:
+        saltSize = config['Salt']['saltSize']
+        saltSize = int(saltSize)
+    except KeyError:
+        saltSize = 8
+        print("ERROR: saltSize not defined or not integer. Reverting to 8")
+    return quiet,alg,saltSize
+
+def salter(pswd,saltsize):
+    import string
+    import secrets
+    pass
+
 def init_usrs(nUsr):
     import hashlib
     usrlist=[]
@@ -26,11 +54,14 @@ def save_users(usrlist,overWrite):
         saveFile = open("usrlist", "w")
     else:
         saveFile = open("usrlist", "a")
-    for x in range(len(usrlist)):
-        if (x-2)<len(usrlist):
-            saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+",")
-        else:
-            saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1]))
+    if len(usrlist)>0:
+        for x in range(len(usrlist)):
+            if (x-2)<len(usrlist):
+                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1])+",")
+            else:
+                saveFile.write(str(usrlist[x][0])+","+str(usrlist[x][1]))
+    else:
+        saveFile.write('')
     saveFile.close()
    
 def usr_check(usrn,pswd,usrlist):
@@ -78,7 +109,7 @@ def login_init(usrname,pswd,overWrite,quiet):
         else:
             newFile=False
         while True:
-            nUsr=input("Enter the number of users to initialize: ")
+            nUsr=input("Enter the number of users to initialize ('0' Clears the database): ")
             try:
                 nUsr=int(nUsr)
                 break
@@ -87,6 +118,8 @@ def login_init(usrname,pswd,overWrite,quiet):
         if nUsr>0:
             usrlist=init_usrs(nUsr)
             save_users(usrlist,newFile)
+        elif nUsr==0:
+            save_users([],True)
     else:
         usrlist = load_users()
         Ufound,Pfound=usr_check(usrname,pswd,usrlist)
@@ -94,36 +127,38 @@ def login_init(usrname,pswd,overWrite,quiet):
     return loginSt
 
 
-def Auth_test():
+def Auth_test(quiet):
     import os
+    configRead()
     try:
         print("[Authentication Test]".center(os.get_terminal_size().columns))
     except OSError:
         print("[Authentication Test]")
     usr=input("Input username: ")
     pswd=input("Input password: ")
-    if input("Enable quiet mode? [y/N]").upper() == "Y":
-        quiet=True
-    else:
-        quiet=False
+#    if input("Enable quiet mode? [y/N]").upper() == "Y":
+#        quiet=True
+#    else:
+#        quiet=False
     loginSuccess=login_init(usr,pswd,False,quiet)
     print("Login success status:", loginSuccess)
 
 def main_menu():
+    quiet,alg,saltSize=configRead()
     print("\n--- Main Menu ---")
     print("0. Initialize user accounts")
     print("1. Test Authentication")
     print("2. Exit")
     choice = input("Enter your choice: ")
     if choice == '0':
-        login_init('','',True,False)
+        login_init('','',True,quiet)
     elif choice == '1':
-        Auth_test()
+        Auth_test(quiet)
     elif choice == '2':
         print("Exiting program.")
         exit()
     else:
-        print("Invalid choice. Please enter 1 or 2.")
+        print("Invalid choice. Please enter 0, 1 or 2.")
         main_menu()
 
 if __name__ == "__main__":
