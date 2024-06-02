@@ -15,9 +15,8 @@ This Python script provides a simple user authentication system with functionali
 ``` 
 git clone https://github.com/1to5pc/python-auth.git
 ```
-<br>
 
-2) __Install Dependencies:__ Ensure you have Python installed on your machine.<br>
+2) __Install Dependencies:__ Ensure you have Python installed on your machine.
 
 3) __Configuration:__ Customize the configuration parameters by editing the config.ini file.
 
