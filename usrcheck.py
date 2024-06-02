@@ -151,9 +151,11 @@ def login_init(usrname,pswd,overWrite,quiet,saltSize):
         sys.exit()
     elif overWrite==True:
         # Bug fix for when no usrlist exists but the user asks not to overwrite user list
-        newFile = True
-        if os.path.isfile("usrlist") and (input("Do you want to overwrite the existing user list [Y/N]? ").upper() == 'N'):
-            newFile = False
+        newFile = False
+        if not(os.path.isfile("usrlist")):
+            newFile = True
+        elif os.path.isfile("usrlist") and (input("Do you want to overwrite the existing user list [y/N]? ").upper() == 'Y'):
+            newFile = True
         while True:
             # TODO: 
             # Seems to me redundant to ask if they want to clear the database when "overwriting" the existing database does
@@ -161,7 +163,10 @@ def login_init(usrname,pswd,overWrite,quiet,saltSize):
             nUsr=input("Enter the number of users to initialize ('0' Clears the database): ")
             try:
                 nUsr=int(nUsr)
-                break
+                if int(nUsr)<0:
+                    print('The value must not be negative.')
+                else:
+                    break
             except ValueError:
                 pass
         if nUsr>0:
