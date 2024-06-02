@@ -44,6 +44,9 @@ Exit the program when finished.
 # Contributing
 Contributions are welcome! If you have any suggestions, improvements, or feature requests, feel free to open an issue or submit a pull request.
 
+> [!NOTE]
+> Ensure pull requests are directed at the **development** branch.
+
 # License
 This project is licensed under the MIT License.
 
