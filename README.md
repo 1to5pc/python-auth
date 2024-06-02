@@ -13,7 +13,7 @@ This Python script provides a simple user authentication system with functionali
 1) __Clone the Repository:__ Clone this repository to your local machine.
 
 ``` 
-git clone https://github.com/1to5pc/.git
+git clone https://github.com/1to5pc/python-auth.git
 ```
 <br>
 
