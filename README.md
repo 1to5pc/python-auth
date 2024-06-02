@@ -1,5 +1,9 @@
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/1to5pc/python-auth/backend-test.yml?style=for-the-badge&label=Back%20End)
-![GitHub top language](https://img.shields.io/github/languages/top/1to5pc/python-auth?style=for-the-badge&logo=python)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/1to5pc/python-auth/backend-test.yml?style=for-the-badge&label=Back%20End&logo=github)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/1to5pc/python-auth/github-code-scanning%2Fcodeql?style=for-the-badge&logo=github&label=CodeQL)
+
+[![forthebadge](https://forthebadge.com/images/badges/license-mit.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/0-percent-optimized.svg)](https://forthebadge.com)
 
 # User Authentication System
 This Python script provides a simple user authentication system with functionalities to initialize user accounts, test authentication, and manage user data securely.
