@@ -4,4 +4,7 @@
 - [] Remove cli version from coming up releases
 - [] Implementing wiki
 - [x] Create a readme
+- [x] Create ASCII art
+- [x] Auto launch ASCII art and set the cat to random position each time
+- [x] Intergrate ASCII file to main.py and make it run everytime the file is opened
 _Pretty lame bois we need some more stuff going_
