@@ -24,6 +24,12 @@ git clone https://github.com/1to5pc/python-auth.git
 
 3) __Configuration:__ Customize the configuration parameters by editing the config.ini file.
 
+ # __Direct download of latest release__
+
+ Download the usrcheck.py and hash.py files from the latest release below.
+ 
+[![latest version](https://img.shields.io/github/v/release/1to5pc/python-auth?color=%2344cc11&label=Latest%20release&style=for-the-badge)](https://github.com/1to5pc/python-auth/releases/latest)
+
 # Usage
 1) __Initialize User Accounts:__
 
