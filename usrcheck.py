@@ -29,7 +29,12 @@ def configRead():
     except KeyError:
         saltSize = 8
         print("ERROR: saltSize not defined or not integer. Reverting to 8")
-    return quiet,alg,saltSize
+    try:
+        art = config['Config']['art']
+        art = art.lower() in ("on")
+    except KeyError:
+        art = True
+    return quiet,alg,saltSize,art
 
 def salter(pswd,saltsize):
     import string
@@ -201,7 +206,7 @@ def Auth_test(quiet):
         print(loginSuccess)
 
 def main_menu():
-    quiet,alg,saltSize=configRead()
+    quiet,alg,saltSize,art=configRead()
     print("\n--- Main Menu ---")
     print("0. Initialize user accounts")
     print("1. Test Authentication")
