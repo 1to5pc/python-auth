@@ -1,9 +1,10 @@
 # initialise required libs
-import art
 import usrcheck
-import random
 quiet,alg,saltSize,artConf=usrcheck.configRead()
-if artConf==True:
+from pathlib import Path
+
+if artConf==True and Path('art.py').exists(): # Check if art is enabled AND if art.py exists
+  import art
   # initialise ASCII art
   # Define the ASCII art for the text
   text_art = r"""
