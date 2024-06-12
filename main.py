@@ -1,9 +1,10 @@
 # initialise required libs
-import art
 import usrcheck
-import random
 quiet,alg,saltSize,artConf=usrcheck.configRead()
-if artConf==True:
+from pathlib import Path
+
+if artConf==True and Path('art.py').exists(): # Check if art is enabled AND if art.py exists
+  import art
   # initialise ASCII art
   # Define the ASCII art for the text
   text_art = r"""
@@ -22,6 +23,7 @@ if artConf==True:
    > ^ <
   """
   # initialise other required python files
+
   combined_art = art.insert_cat_randomly(text_art, cat_art)
   print(combined_art)
 
