@@ -25,6 +25,7 @@ if artConf==True:
 
   combined_art = art.insert_cat_randomly(text_art, cat_art)
   print(combined_art)
-usrcheck.main_menu()
 
-
+if __name__ == "__main__":
+    while True:
+      usrcheck.main_menu()
