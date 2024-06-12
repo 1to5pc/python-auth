@@ -23,7 +23,6 @@ if artConf==True and Path('art.py').exists(): # Check if art is enabled AND if a
    > ^ <
   """
   # initialise other required python files
-
   combined_art = art.insert_cat_randomly(text_art, cat_art)
   print(combined_art)
 
